@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 const { Command } = require('commander');
-const ncp = require('ncp').ncp;
+const fs = require('fs-extra');
 const path = require('path');
-const fs = require('fs');
 
 const program = new Command();
 
@@ -15,15 +14,18 @@ program
   .command('new')
   .description('Create a new project')
   .action(() => {
+    // Obtenir le chemin du module endurance-template dans node_modules
     const templatePath = path.resolve(__dirname, 'node_modules', 'endurance-template');
     const currentPath = process.cwd();
 
-    ncp(templatePath, currentPath, (err) => {
-      if (err) {
-        return console.error(err);
-      }
-      console.log('Project created successfully');
-    });
+    // Copier les fichiers depuis templatePath vers currentPath
+    fs.copy(templatePath, currentPath)
+      .then(() => {
+        console.log('Project created successfully');
+      })
+      .catch(err => {
+        console.error(err);
+      });
   });
 
 program.parse(process.argv);

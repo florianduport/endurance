@@ -1,6 +1,6 @@
 {
   "name": "endurance",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "lightweight and modular framework based on express",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   "dependencies": {
     "commander": "^12.1.0",
     "endurance-template": "^0.1.0",
+    "fs-extra": "^11.2.0",
     "ncp": "^2.0.0"
   }
 }
