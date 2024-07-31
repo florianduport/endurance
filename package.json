@@ -18,6 +18,7 @@
   "homepage": "https://github.com/florianduport/endurance#readme",
   "dependencies": {
     "commander": "^12.1.0",
+    "endurance-template": "^0.1.0",
     "ncp": "^2.0.0"
   }
 }
