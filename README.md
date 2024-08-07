@@ -9,11 +9,8 @@ The Endurance Framework is a highly modular and scalable Node.js project templat
 - **Dynamic Module Loading**: Easily add new modules with their own models and routes, and they will be automatically loaded and exposed by the application.
 - **Express.js**: Fast, unopinionated, minimalist web framework for Node.js.
 - **Modular Structure**: Each module is independent, promoting separation of concerns and better maintainability.
-- **Session Management**: Uses MongoDB for session storage in production and in-memory sessions for development.
-- **Environment Configuration**: Easily switch between development and production environments.
-- **Robust Testing**: Includes setup for testing with Mocha, Supertest, and Chai.
-- **PM2 Integration**: Manage and keep your application alive in production.
-- **Nodemon for Development**: Automatically restart your server on code changes during development.
+- **Modules marketplace**: Uses npm packages starting with "EDRM-" to quickly add features to your API. 
+- **Lib assets**: Include everything your need to start creating a robust API : events management, CRON, swagger, webhooks etc.
 
 ## Getting Started
 
