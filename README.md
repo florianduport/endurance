@@ -10,7 +10,7 @@ The Endurance Framework is a highly modular and scalable Node.js project templat
 - **Express.js**: Fast, unopinionated, minimalist web framework for Node.js.
 - **Modular Structure**: Each module is independent, promoting separation of concerns and better maintainability.
 - **Modules marketplace**: Uses npm packages starting with "EDRM-" to quickly add features to your API. 
-- **Lib assets**: Include everything your need to start creating a robust API : events management, CRON, swagger, webhooks etc.
+- **Lib assets**: Include everything your need to start creating a robust API : events management, CRON, swagger, API versioning, webhooks etc.
 
 ## Getting Started
 
