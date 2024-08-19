@@ -34,7 +34,7 @@ program
   .action(moduleName => {
     const templatePath = path.resolve(__dirname, 'node_modules', 'endurance-template-module');
     const currentPath = process.cwd();
-    const modulePath = path.resolve(currentPath, 'src', 'modules', moduleName);
+    const modulePath = path.resolve(currentPath, moduleName);
 
     const replaceModuleNameInFile = (filePath, moduleName) => {
       const data = fs.readFileSync(filePath, 'utf8');
