@@ -47,13 +47,11 @@ program
         const oldPath = path.join(dirPath, dirent.name);
         const newPath = path.join(dirPath, dirent.name.replace(/{module-name}/g, moduleName));
 
-        fs.renameSync(oldPath, newPath);
-
         if (dirent.isDirectory()) {
-          // Si c'est un répertoire, on le traite récursivement
+          fs.renameSync(oldPath, newPath);
           processDirectory(newPath, moduleName);
         } else if (dirent.isFile()) {
-          // Si c'est un fichier, on remplace le contenu
+          fs.renameSync(oldPath, newPath);
           replaceModuleNameInFile(newPath, moduleName);
         }
       });
