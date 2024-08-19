@@ -11,7 +11,7 @@ program
   .description('Endurance CLI to bootstrap new projects');
 
 program
-  .command('new project')
+  .command('new-project')
   .description('Create a new project')
   .action(() => {
     // Obtenir le chemin du module endurance-template dans node_modules
@@ -29,7 +29,7 @@ program
   });
 
   program
-  .command('new module <moduleName>')
+  .command('new-module <moduleName>')
   .description('Create a new module')
   .action(moduleName => {
     const templatePath = path.resolve(__dirname, 'node_modules', 'endurance-template-module');
