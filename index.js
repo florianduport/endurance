@@ -36,29 +36,32 @@ program
     const currentPath = process.cwd();
     const modulePath = path.resolve(currentPath, 'src', 'modules', moduleName);
 
-    const replaceModuleName = (filePath, moduleName) => {
+    const replaceModuleNameInFile = (filePath, moduleName) => {
       const data = fs.readFileSync(filePath, 'utf8');
       const result = data.replace(/{module-name}/g, moduleName);
       fs.writeFileSync(filePath, result, 'utf8');
     };
 
+    const processDirectory = (dirPath, moduleName) => {
+      fs.readdirSync(dirPath, { withFileTypes: true }).forEach(dirent => {
+        const oldPath = path.join(dirPath, dirent.name);
+        const newPath = path.join(dirPath, dirent.name.replace(/{module-name}/g, moduleName));
+
+        fs.renameSync(oldPath, newPath);
+
+        if (dirent.isDirectory()) {
+          // Si c'est un répertoire, on le traite récursivement
+          processDirectory(newPath, moduleName);
+        } else if (dirent.isFile()) {
+          // Si c'est un fichier, on remplace le contenu
+          replaceModuleNameInFile(newPath, moduleName);
+        }
+      });
+    };
+
     fs.copy(templatePath, modulePath)
       .then(() => {
-        fs.readdirSync(modulePath, { withFileTypes: true }).forEach(dirent => {
-          const dirPath = path.join(modulePath, dirent.name);
-          
-          if (dirent.isDirectory()) {
-            fs.readdirSync(dirPath).forEach(file => {
-              const filePath = path.join(dirPath, file);
-              const newFileName = file.replace(/{module-name}/g, moduleName);
-              const newFilePath = path.join(dirPath, newFileName);
-              fs.renameSync(filePath, newFilePath);
-              
-              replaceModuleName(newFilePath, moduleName);
-            });
-          }
-        });
-
+        processDirectory(modulePath, moduleName);
         console.log('Module created successfully');
       })
       .catch(err => {
