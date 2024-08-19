@@ -42,29 +42,27 @@ program
       fs.writeFileSync(filePath, result, 'utf8');
     };
 
-    const processDirectory = (dirPath, moduleName) => {
-      fs.readdirSync(dirPath, { withFileTypes: true }).forEach(dirent => {
-        const oldPath = path.join(dirPath, dirent.name);
-        const newPath = path.join(dirPath, dirent.name.replace(/{module-name}/g, moduleName));
+    const processDirectory = (srcDir, destDir, moduleName) => {
+      fs.readdirSync(srcDir, { withFileTypes: true }).forEach(dirent => {
+        const srcPath = path.join(srcDir, dirent.name);
+        const destPath = path.join(destDir, dirent.name.replace(/{module-name}/g, moduleName));
 
         if (dirent.isDirectory()) {
-          fs.renameSync(oldPath, newPath);
-          processDirectory(newPath, moduleName);
+          fs.ensureDirSync(destPath);
+          processDirectory(srcPath, destPath, moduleName);
         } else if (dirent.isFile()) {
-          fs.renameSync(oldPath, newPath);
-          replaceModuleNameInFile(newPath, moduleName);
+          fs.copySync(srcPath, destPath);
+          replaceModuleNameInFile(destPath, moduleName);
         }
       });
     };
 
-    fs.copy(templatePath, modulePath)
-      .then(() => {
-        processDirectory(modulePath, moduleName);
-        console.log('Module created successfully');
-      })
-      .catch(err => {
-        console.error('Error creating module:', err);
-      });
+    fs.ensureDirSync(modulePath); 
+
+    processDirectory(templatePath, modulePath, moduleName);
+
+    console.log('Module created successfully');
   });
+
 
 program.parse(process.argv);
