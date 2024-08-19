@@ -36,7 +36,7 @@ The Endurance Framework is a highly modular and scalable Node.js project templat
     mkdir newproject
     cd newproject
 
-    endurance new
+    endurance new project
     ```
 
 ### Usage
@@ -59,13 +59,20 @@ The Endurance Framework is a highly modular and scalable Node.js project templat
 
     To add a new module, create a new folder under the `modules` directory. Each module should contain its own models and routes.
 
+
+    ```sh
+    endurance new module
+    ```
+
     Example structure for a new module:
 
     ```
     modules/
       your-module/
+        listeners/
+          yourListener.listener.js
         models/
-          YourModel.js
+          YourModel.model.js
         routes/
           yourModule.router.js
     ```
