@@ -3,11 +3,11 @@
 const { Command } = require('commander');
 const fs = require('fs-extra');
 const path = require('path');
+const packageJson = require('./package.json');
 
 const program = new Command();
 
-program
-  .version('1.0.0')
+program.version(packageJson.version, '-v, --version', 'output the current version')
   .description('Endurance CLI to bootstrap new projects');
 
 program
