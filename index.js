@@ -48,9 +48,11 @@ program
         const destPath = path.join(destDir, dirent.name.replace(/{module-name}/g, moduleName));
 
         if (dirent.isDirectory()) {
-          fs.ensureDirSync(destPath);
-          processDirectory(srcPath, destPath, moduleName);
-        } else if (dirent.isFile()) {
+          if (dirent.name !== 'node_modules') {  
+            fs.ensureDirSync(destPath);
+            processDirectory(srcPath, destPath, moduleName);
+          }
+        } else if (dirent.isFile() && dirent.name !== 'package.json') { 
           fs.copySync(srcPath, destPath);
           replaceModuleNameInFile(destPath, moduleName);
         }
@@ -58,10 +60,9 @@ program
     };
 
     fs.ensureDirSync(modulePath); 
-
     processDirectory(templatePath, modulePath, moduleName);
 
-    console.log('Module created successfully');
+    console.log(`Module "${moduleName}" created successfully in ${modulePath}`);
   });
 
 
