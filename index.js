@@ -63,5 +63,57 @@ program
     console.log(`Module "${moduleName}" created successfully in ${modulePath}`);
   });
 
+  program
+  .command('list-events')
+  .description('List all available events across modules and specific node_modules')
+  .action(() => {
+    const searchEventsInDirectory = (dirPath, results = [], moduleName = '') => {
+      fs.readdirSync(dirPath, { withFileTypes: true }).forEach(dirent => {
+        const fullPath = path.join(dirPath, dirent.name);
+
+        if (dirent.isDirectory()) {
+          searchEventsInDirectory(fullPath, results, moduleName || dirent.name);
+        } else if (dirent.isFile() && fullPath.endsWith('.js')) {
+          const fileContent = fs.readFileSync(fullPath, 'utf8');
+          const eventMatches = fileContent.match(/emitter\.emit\((eventTypes\.[\w_]+)/g);
+
+          if (eventMatches) {
+            eventMatches.forEach(event => {
+              results.push({ event, file: fullPath, module: moduleName || 'Unknown module' });
+            });
+          }
+        }
+      });
+
+      return results;
+    };
+
+    let results = [];
+
+    const modulesPath = path.resolve(process.cwd(), 'modules');
+    results = searchEventsInDirectory(modulesPath, results);
+
+    const nodeModulesPath = path.resolve(process.cwd(), 'node_modules');
+    const enduranceCorePath = path.join(nodeModulesPath, 'endurance-core');
+    const edrmModules = fs.readdirSync(nodeModulesPath).filter(dir => dir.startsWith('edrm-'));
+
+    if (fs.existsSync(enduranceCorePath)) {
+      results = searchEventsInDirectory(enduranceCorePath, results, 'endurance-core');
+    }
+
+    edrmModules.forEach(moduleName => {
+      const modulePath = path.join(nodeModulesPath, moduleName);
+      results = searchEventsInDirectory(modulePath, results, moduleName);
+    });
+
+    if (results.length === 0) {
+      console.log('No events found.');
+    } else {
+      results.forEach(result => {
+        console.log(`Event: ${result.event} | File: ${result.file} | Module: ${result.module}`);
+      });
+    }
+  });
+
 
 program.parse(process.argv);
