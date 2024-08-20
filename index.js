@@ -115,5 +115,57 @@ program
     }
   });
 
+  program
+  .command('list-env-vars')
+  .description('List all environment variables used across modules and specific node_modules')
+  .action(() => {
+    const searchEnvVarsInDirectory = (dirPath, results = [], moduleName = '') => {
+      fs.readdirSync(dirPath, { withFileTypes: true }).forEach(dirent => {
+        const fullPath = path.join(dirPath, dirent.name);
+
+        if (dirent.isDirectory()) {
+          searchEnvVarsInDirectory(fullPath, results, moduleName || dirent.name);
+        } else if (dirent.isFile() && fullPath.endsWith('.js')) {
+          const fileContent = fs.readFileSync(fullPath, 'utf8');
+          const envVarMatches = fileContent.match(/process\.env\.[\w_]+/g);
+
+          if (envVarMatches) {
+            envVarMatches.forEach(envVar => {
+              results.push({ envVar, file: fullPath, module: moduleName || 'Unknown module' });
+            });
+          }
+        }
+      });
+
+      return results;
+    };
+
+    let results = [];
+
+    const modulesPath = path.resolve(process.cwd(), 'modules');
+    results = searchEnvVarsInDirectory(modulesPath, results);
+
+    const nodeModulesPath = path.resolve(process.cwd(), 'node_modules');
+    const enduranceCorePath = path.join(nodeModulesPath, 'endurance-core');
+    const edrmModules = fs.readdirSync(nodeModulesPath).filter(dir => dir.startsWith('edrm-'));
+
+    if (fs.existsSync(enduranceCorePath)) {
+      results = searchEnvVarsInDirectory(enduranceCorePath, results, 'endurance-core');
+    }
+
+    edrmModules.forEach(moduleName => {
+      const modulePath = path.join(nodeModulesPath, moduleName);
+      results = searchEnvVarsInDirectory(modulePath, results, moduleName);
+    });
+
+    if (results.length === 0) {
+      console.log('No environment variables found.');
+    } else {
+      results.forEach(result => {
+        console.log(`Environment Variable: ${result.envVar} | File: ${result.file} | Module: ${result.module}`);
+      });
+    }
+  });
+
 
 program.parse(process.argv);
