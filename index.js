@@ -10,57 +10,96 @@ const program = new Command();
 program.version(packageJson.version, '-v, --version', 'output the current version')
   .description('Endurance CLI to bootstrap new projects');
 
-program
+  program
   .command('new-project')
   .description('Create a new project')
   .action(() => {
-    // Obtenir le chemin du module endurance-template dans node_modules
-    const templatePath = path.resolve(__dirname, 'node_modules', 'endurance-template');
-    const currentPath = process.cwd();
 
-    // Copier les fichiers depuis templatePath vers currentPath
-    fs.copy(templatePath, currentPath)
-      .then(() => {
-        console.log('Project created successfully');
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    const findModulePath = (moduleName) => {
+      const possiblePaths = [
+        path.resolve(__dirname, 'node_modules', moduleName), 
+        path.resolve(__dirname, 'node_modules', 'endurance', 'node_modules', moduleName) 
+      ];
+
+      for (const modulePath of possiblePaths) {
+        if (fs.existsSync(modulePath)) {
+          return modulePath;
+        }
+      }
+
+      throw new Error(`Module ${moduleName} not found in expected locations.`);
+    };
+
+    try {
+      const templatePath = findModulePath('endurance-template');
+      const currentPath = process.cwd();
+
+
+      fs.copy(templatePath, currentPath)
+        .then(() => {
+          console.log('Project created successfully');
+        })
+        .catch(err => {
+          console.error('Error copying template:', err);
+        });
+    } catch (err) {
+      console.error(err.message);
+    }
   });
 
-  program
+program
   .command('new-module <moduleName>')
   .description('Create a new module')
   .action(moduleName => {
-    const templatePath = path.resolve(__dirname, 'node_modules', 'endurance-template-module');
-    const currentPath = process.cwd();
-    const modulePath = path.resolve(currentPath, 'modules', moduleName);
 
-    const replaceModuleNameInFile = (filePath, moduleName) => {
-      const data = fs.readFileSync(filePath, 'utf8');
-      const result = data.replace(/{module-name}/g, moduleName);
-      fs.writeFileSync(filePath, result, 'utf8');
-    };
+    const findModulePath = (moduleName) => {
+      const possiblePaths = [
+        path.resolve(__dirname, 'node_modules', moduleName), 
+        path.resolve(__dirname, 'node_modules', 'endurance', 'node_modules', moduleName) 
+      ];
 
-    const processDirectory = (srcDir, destDir, moduleName) => {
-      fs.readdirSync(srcDir, { withFileTypes: true }).forEach(dirent => {
-        const srcPath = path.join(srcDir, dirent.name);
-        const destPath = path.join(destDir, dirent.name.replace(/{module-name}/g, moduleName));
-
-        if (dirent.isDirectory()) {
-          fs.ensureDirSync(destPath);
-          processDirectory(srcPath, destPath, moduleName);
-        } else if (dirent.isFile() && dirent.name !== 'package.json') {
-          fs.copySync(srcPath, destPath);
-          replaceModuleNameInFile(destPath, moduleName);
+      for (const modulePath of possiblePaths) {
+        if (fs.existsSync(modulePath)) {
+          return modulePath;
         }
-      });
+      }
+
+      throw new Error(`Module ${moduleName} not found in expected locations.`);
     };
 
-    fs.ensureDirSync(modulePath);
-    processDirectory(templatePath, modulePath, moduleName);
+    try {
+      const templatePath = findModulePath('endurance-template-module');
+      const currentPath = process.cwd();
+      const modulePath = path.resolve(currentPath, 'modules', moduleName);
 
-    console.log(`Module "${moduleName}" created successfully in ${modulePath}`);
+      const replaceModuleNameInFile = (filePath, moduleName) => {
+        const data = fs.readFileSync(filePath, 'utf8');
+        const result = data.replace(/{module-name}/g, moduleName);
+        fs.writeFileSync(filePath, result, 'utf8');
+      };
+
+      const processDirectory = (srcDir, destDir, moduleName) => {
+        fs.readdirSync(srcDir, { withFileTypes: true }).forEach(dirent => {
+          const srcPath = path.join(srcDir, dirent.name);
+          const destPath = path.join(destDir, dirent.name.replace(/{module-name}/g, moduleName));
+
+          if (dirent.isDirectory()) {
+            fs.ensureDirSync(destPath);
+            processDirectory(srcPath, destPath, moduleName);
+          } else if (dirent.isFile() && dirent.name !== 'package.json') {
+            fs.copySync(srcPath, destPath);
+            replaceModuleNameInFile(destPath, moduleName);
+          }
+        });
+      };
+
+      fs.ensureDirSync(modulePath);
+      processDirectory(templatePath, modulePath, moduleName);
+
+      console.log(`Module "${moduleName}" created successfully in ${modulePath}`);
+    } catch (err) {
+      console.error(err.message);
+    }
   });
 
   program
