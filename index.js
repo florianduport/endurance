@@ -17,8 +17,8 @@ program
 
     const findModulePath = (moduleName) => {
       const possiblePaths = [
-        path.resolve(path.dirname(''), 'node_modules', moduleName), 
-        path.resolve(path.dirname(''), 'node_modules', 'endurance', 'node_modules', moduleName) 
+        path.resolve(process.cwd(), 'node_modules', moduleName), 
+        path.resolve(process.cwd(), 'node_modules', 'endurance', 'node_modules', moduleName) 
       ];
 
       for (const modulePath of possiblePaths) {
@@ -53,8 +53,8 @@ program
 
     const findModulePath = (moduleName) => {
       const possiblePaths = [
-        path.resolve(path.dirname(''), 'node_modules', moduleName), 
-        path.resolve(path.dirname(''), 'node_modules', 'endurance', 'node_modules', moduleName) 
+        path.resolve(process.cwd(), 'node_modules', moduleName), 
+        path.resolve(process.cwd(), 'node_modules', 'endurance', 'node_modules', moduleName) 
       ];
 
       for (const modulePath of possiblePaths) {

@@ -1,6 +1,6 @@
 {
   "name": "endurance",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "lightweight and modular framework based on express",
   "type": "module",
   "main": "index.js",
@@ -23,8 +23,8 @@
   "homepage": "https://github.com/florianduport/endurance#readme",
   "dependencies": {
     "commander": "^12.1.0",
-    "endurance-template": "^0.1.0",
-    "endurance-template-module": "^0.1.0",
+    "endurance-template": "^0.2.0",
+    "endurance-template-module": "^0.2.0",
     "fs-extra": "^11.2.0",
     "ncp": "^2.0.0"
   }
