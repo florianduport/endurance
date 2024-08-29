@@ -3,9 +3,13 @@
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
 import packageJson from './package.json' assert { type: 'json' };
 
 const program = new Command();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 program.version(packageJson.version, '-v, --version', 'output the current version')
   .description('Endurance CLI to bootstrap new projects');
@@ -17,16 +21,17 @@ program
 
     const findModulePath = (moduleName) => {
       const possiblePaths = [
-        path.resolve(process.cwd(), 'node_modules', moduleName), 
-        path.resolve(process.cwd(), 'node_modules', 'endurance', 'node_modules', moduleName) 
+        path.join(__dirname, 'node_modules', moduleName), 
+        path.join(__dirname, '..', 'node_modules', moduleName), 
+        path.join(__dirname, '..', '..', 'node_modules', moduleName),
       ];
-
+    
       for (const modulePath of possiblePaths) {
         if (fs.existsSync(modulePath)) {
           return modulePath;
         }
       }
-
+    
       throw new Error(`Module ${moduleName} not found in expected locations.`);
     };
 
@@ -53,8 +58,9 @@ program
 
     const findModulePath = (moduleName) => {
       const possiblePaths = [
-        path.resolve(process.cwd(), 'node_modules', moduleName), 
-        path.resolve(process.cwd(), 'node_modules', 'endurance', 'node_modules', moduleName) 
+        path.join(__dirname, 'node_modules', moduleName), 
+        path.join(__dirname, '..', 'node_modules', moduleName), 
+        path.join(__dirname, '..', '..', 'node_modules', moduleName),
       ];
 
       for (const modulePath of possiblePaths) {

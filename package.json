@@ -1,6 +1,6 @@
 {
   "name": "endurance",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "lightweight and modular framework based on express",
   "type": "module",
   "main": "index.js",
