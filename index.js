@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 
-const { Command } = require('commander');
-const fs = require('fs-extra');
-const path = require('path');
-const packageJson = require('./package.json');
+import { Command } from 'commander';
+import fs from 'fs-extra';
+import path from 'path';
+import packageJson from './package.json' assert { type: 'json' };
 
 const program = new Command();
 
 program.version(packageJson.version, '-v, --version', 'output the current version')
   .description('Endurance CLI to bootstrap new projects');
 
-  program
+program
   .command('new-project')
   .description('Create a new project')
   .action(() => {
 
     const findModulePath = (moduleName) => {
       const possiblePaths = [
-        path.resolve(__dirname, 'node_modules', moduleName), 
-        path.resolve(__dirname, 'node_modules', 'endurance', 'node_modules', moduleName) 
+        path.resolve(path.dirname(''), 'node_modules', moduleName), 
+        path.resolve(path.dirname(''), 'node_modules', 'endurance', 'node_modules', moduleName) 
       ];
 
       for (const modulePath of possiblePaths) {
@@ -33,7 +33,6 @@ program.version(packageJson.version, '-v, --version', 'output the current versio
     try {
       const templatePath = findModulePath('endurance-template');
       const currentPath = process.cwd();
-
 
       fs.copy(templatePath, currentPath)
         .then(() => {
@@ -54,8 +53,8 @@ program
 
     const findModulePath = (moduleName) => {
       const possiblePaths = [
-        path.resolve(__dirname, 'node_modules', moduleName), 
-        path.resolve(__dirname, 'node_modules', 'endurance', 'node_modules', moduleName) 
+        path.resolve(path.dirname(''), 'node_modules', moduleName), 
+        path.resolve(path.dirname(''), 'node_modules', 'endurance', 'node_modules', moduleName) 
       ];
 
       for (const modulePath of possiblePaths) {
@@ -102,7 +101,7 @@ program
     }
   });
 
-  program
+program
   .command('list-events')
   .description('List all available events across modules and specific node_modules')
   .action(() => {
@@ -154,7 +153,7 @@ program
     }
   });
 
-  program
+program
   .command('list-env-vars')
   .description('List all environment variables used across modules and specific node_modules')
   .action(() => {
@@ -205,6 +204,5 @@ program
       });
     }
   });
-
 
 program.parse(process.argv);
